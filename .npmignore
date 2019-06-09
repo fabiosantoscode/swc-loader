@@ -3,3 +3,4 @@ example/build
 package-lock.json
 *.log
 yarn.lock
+example/

@@ -1,5 +1,5 @@
 const loaderUtils = require('loader-utils');
-const swc = require('swc');
+const swc = require('@swc/core');
 
 function makeLoader() {
     return function (source, inputSourceMap) {
@@ -21,7 +21,6 @@ function makeLoader() {
             });
             delete loaderOptions.sourceMap;
         }
-
 
         const programmaticOptions = Object.assign({}, loaderOptions, {
             filename,
@@ -57,8 +56,11 @@ function makeLoader() {
         }
 
         try {
-            const output = swc.transformSync(source, programmaticOptions);
-            callback(null, [output.code, output.map])
+            swc.transform(source, programmaticOptions).then((output) => {
+                callback(null, output.code, output.map)
+            }, (err) => {
+                callback(err)
+            });
         } catch (e) {
             callback(e)
         }
